@@ -17,8 +17,8 @@ export class AuthService {
   ) {}
 
   // login user
-  async validationUser({ email, password }: AuthDto) {
-    const findUser = await this.findUser(email);
+  async validateUser({ username, password }: AuthDto) {
+    const findUser = await this.findUser(username);
     const isMatch = await bcrypt.compare(password, findUser.password);
 
     // check password
@@ -31,9 +31,9 @@ export class AuthService {
   }
 
   // register user
-  async register({ password, email, username }: AuthDto) {
+  async register({ password, username }: AuthDto) {
     const findUser = await this.prisma.user.findUnique({
-      where: { email: email },
+      where: { username },
     });
 
     // check user exists
@@ -43,7 +43,7 @@ export class AuthService {
     try {
       const hash = await bcrypt.hash(password, 10);
       const createUser = await this.prisma.user.create({
-        data: { email, password: hash, username },
+        data: { username, password: hash },
       });
 
       const { password: _, ...user } = createUser;
@@ -54,16 +54,16 @@ export class AuthService {
   }
 
   // delete user
-  async delete(email: string) {
-    await this.findUser(email);
+  async delete(username: string) {
+    await this.findUser(username);
 
-    return await this.prisma.user.delete({ where: { email } });
+    return await this.prisma.user.delete({ where: { username } });
   }
 
   // find user
-  async findUser(email: string) {
+  async findUser(username: string) {
     const user = await this.prisma.user.findUnique({
-      where: { email: email },
+      where: { username },
     });
 
     // check user exists

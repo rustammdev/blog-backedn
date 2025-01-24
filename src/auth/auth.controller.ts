@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { DeleteUserDto } from './dto/email.dto';
 import { JwtAuthGuard } from './common/guards/jwt.guard';
 import { Request } from 'express';
 
@@ -28,7 +27,7 @@ export class AuthController {
   // login user
   @Post('/login')
   async userLogin(@Body(new ValidationPipe()) payload: AuthDto) {
-    return await this.authservice.validationUser(payload);
+    return await this.authservice.validateUser(payload);
   }
 
   // register user
@@ -39,14 +38,15 @@ export class AuthController {
 
   // delete user
   @Delete('/delete')
-  async userDelete(@Body(new ValidationPipe()) { email }: DeleteUserDto) {
-    return await this.authservice.delete(email);
+  @UseGuards(JwtAuthGuard)
+  async userDelete(@Body(new ValidationPipe()) username: string) {
+    return await this.authservice.delete(username);
   }
 
-  @Get('status')
   @UseGuards(JwtAuthGuard)
+  @Get('status')
   status(@Req() req: Request) {
     console.log('Inside AuthController status method');
-    return req;
+    return req.user;
   }
 }
