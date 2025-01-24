@@ -19,6 +19,7 @@ model Post {
   createdAt DateTime @default(now())
   title    String
   content  String
+  summary  String @default("")
   author   User     @relation(fields: [authorId], references: [id])
   authorId Int
 }

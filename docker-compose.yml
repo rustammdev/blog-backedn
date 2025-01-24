@@ -1,20 +1,4 @@
 services:
-  blog-backend:
-    build: .
-    ports:
-      - '5000:5000'
-    volumes:
-      - ./:/app
-      # - /app/node_modules
-    environment:
-      - DATABASE_URL=postgresql://admin:admin@db:5432/blog?schema=public
-      - PORT=5000
-    depends_on:
-      - db
-    networks:
-      - blog-network
-    command: npm run start:dev
-
   db:
     image: postgres:15-alpine
     restart: always
@@ -30,6 +14,21 @@ services:
       - blog-network
     volumes:
       - pgdata:/var/lib/postgresql/data
+  blog-backend:
+    build: .
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./:/app
+      # - /app/node_modules
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/blog?schema=public
+      - PORT=5000
+    depends_on:
+      - db
+    networks:
+      - blog-network
+    command: npm run start:dev
 
 volumes:
   pgdata:
