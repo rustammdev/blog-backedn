@@ -1,9 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { DeleteUserDto } from './dto/email.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +31,7 @@ export class AuthService {
   }
 
   // register user
-  async register({ password, email }: AuthDto) {
+  async register({ password, email, username }: AuthDto) {
     const findUser = await this.prisma.user.findUnique({
       where: { email: email },
     });
@@ -39,7 +43,7 @@ export class AuthService {
     try {
       const hash = await bcrypt.hash(password, 10);
       const createUser = await this.prisma.user.create({
-        data: { email, password: hash },
+        data: { email, password: hash, username },
       });
 
       const { password: _, ...user } = createUser;
@@ -63,7 +67,7 @@ export class AuthService {
     });
 
     // check user exists
-    if (!user) throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+    if (!user) throw new UnauthorizedException();
 
     return user;
   }

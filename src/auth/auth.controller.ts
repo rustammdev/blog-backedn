@@ -4,11 +4,15 @@ import {
   Delete,
   Get,
   Post,
+  Req,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { DeleteUserDto } from './dto/email.dto';
+import { JwtAuthGuard } from './common/guards/jwt.guard';
+import { Request } from 'express';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -16,6 +20,7 @@ export class AuthController {
 
   // get all user
   @Get('')
+  @UseGuards(JwtAuthGuard)
   async getAll() {
     return await this.authservice.getAll();
   }
@@ -36,5 +41,12 @@ export class AuthController {
   @Delete('/delete')
   async userDelete(@Body(new ValidationPipe()) { email }: DeleteUserDto) {
     return await this.authservice.delete(email);
+  }
+
+  @Get('status')
+  @UseGuards(JwtAuthGuard)
+  status(@Req() req: Request) {
+    console.log('Inside AuthController status method');
+    return req;
   }
 }
