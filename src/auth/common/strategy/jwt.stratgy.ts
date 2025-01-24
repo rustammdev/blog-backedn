@@ -13,8 +13,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  validate(payload: any) {
-    console.log(payload);
-    return payload;
+  async validate(payload: any) {
+    // Token ichidagi foydalanuvchi ma'lumotlarini qaytarish
+    return { id: payload.id, username: payload.username };
   }
 }
