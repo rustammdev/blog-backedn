@@ -25,7 +25,7 @@ export class BlogController {
 
   // get all posts
   // GET /posts?page=2&limit=5
-  @Get('')
+  @Get('/')
   async getAllPosts(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
@@ -36,13 +36,21 @@ export class BlogController {
   }
 
   // get post by id
-  @Get(':id')
+  @Get('/user')
+  @UseGuards(AuthGuard('jwt'))
+  async getPostByUserId(@Req() req: Request) {
+    const userId = req.user?.id;
+    return await this.blogService.getByUserId(userId);
+  }
+
+  // get post by id
+  @Get('/:id')
   async getPostById(@Param('id', ParseIntPipe) id: number) {
     return await this.blogService.getById(id);
   }
 
   // create post
-  @Post('')
+  @Post('/')
   @UseGuards(AuthGuard('jwt'))
   async createBlogPost(
     @Body(new ValidationPipe()) payload: CreateBlogPostDto,
@@ -58,7 +66,7 @@ export class BlogController {
   }
 
   // delete post
-  @Delete(':id')
+  @Delete('/:id')
   @UseGuards(AuthGuard('jwt'))
   async delPostById(
     @Param('id', ParseIntPipe) id: number,
@@ -71,7 +79,7 @@ export class BlogController {
   }
 
   // update post
-  @Patch(':id')
+  @Patch('/:id')
   @UseGuards(AuthGuard('jwt'))
   async updatePostById(
     @Body() payload: updateBlogPostDto,

@@ -84,6 +84,28 @@ export class BlogService {
     return post;
   }
 
+  // get Post by UserId
+  async getByUserId(id: number) {
+    try {
+      const post = await this.prisma.post.findMany({
+        where: { authorId: id },
+        select: {
+          author: { select: { username: true } },
+          title: true,
+          summary: true,
+          content: true,
+          createdAt: true,
+          id: true,
+        },
+      });
+
+      return post;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, 400);
+    }
+  }
+
   async delPostById(postId: number, userId: number) {
     try {
       const post = await this.copywrite(postId, userId);

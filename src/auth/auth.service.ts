@@ -27,7 +27,7 @@ export class AuthService {
 
     const { password: _, ...user } = findUser;
     const token = this.jwtService.sign(user);
-    return { accessToken: token };
+    return { ok: true, accessToken: token };
   }
 
   // register user
@@ -47,7 +47,7 @@ export class AuthService {
       });
 
       const { password: _, ...user } = createUser;
-      return user;
+      return { user, ok: true };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

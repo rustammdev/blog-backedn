@@ -3,6 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import 'dotenv/config';
 
+type JwtPayload = {
+  id: number;
+  username: string;
+};
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
@@ -13,8 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: any) {
-    // Token ichidagi foydalanuvchi ma'lumotlarini qaytarish
+  async validate(payload: JwtPayload) {
     return { id: payload.id, username: payload.username };
   }
 }
