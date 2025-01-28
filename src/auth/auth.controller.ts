@@ -43,10 +43,9 @@ export class AuthController {
     return await this.authservice.delete(username);
   }
 
-  @Get('status')
+  @Get('/status')
   @UseGuards(AuthGuard('jwt'))
   status(@Req() req: Request) {
-    console.log('Inside AuthController status method');
     return req.user;
   }
 }

@@ -9,5 +9,5 @@ export class updateBlogPostDto {
 
   @IsOptional()
   @Length(50, 200)
-  summary: string;
+  summary?: string;
 }
